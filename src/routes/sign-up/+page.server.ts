@@ -5,11 +5,11 @@ import type { Bank } from "@prisma/client";
 import { error, fail, redirect } from "@sveltejs/kit";
 
 export async function load({ locals }) {
-    // if(locals.userRole !== "ADMIN") {
-    //     throw error(400, {
-    //         message: "Only Admin user can access this page"
-    //     })
-    // }
+    if(locals.userRole !== "ADMIN") {
+        throw error(400, {
+            message: "Only Admin user can access this page"
+        })
+    }
 
     return {};
 }
