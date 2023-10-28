@@ -8,6 +8,10 @@ export const auth = lucia({
 	env: dev ? "DEV" : "PROD",
 	middleware: sveltekit(),
 	adapter: prisma(db),
+	sessionExpiresIn: {
+		activePeriod: 25 * 60 * 1000,
+		idlePeriod: 5 * 60 * 60 * 1000,
+	},
 
 	getUserAttributes(e) {
 		return {
