@@ -6,14 +6,24 @@
     import Select from "@forms/Select.svelte";
     import SubmitButton from "@forms/SubmitButton.svelte";
     import TInput from "@forms/TInput.svelte";
-    import { Status, Type } from "@prisma/client";
+    import { Status, Type, type DataPoint } from "@prisma/client";
     import EditIcon from "~icons/lucide/edit-2";
+    import DeleteIcon from "~icons/lucide/trash";
+    import { dateOlderThanDays } from "$lib/apiUtils";
 
     export let data;
     export let form;
 
     let selectedDataPointId: string;
     let selectedStatus: Status = "Login";
+
+    let selectedDataPointData: DataPoint | undefined = undefined;
+
+    $: if (selectedDataPointId != "" && data.dataPoints) {
+        selectedDataPointData = data.dataPoints.find((v) => {
+            return v.id === selectedDataPointId;
+        });
+    }
 </script>
 
 <Modal let:close on:close={(e) => e.detail()} key="addDataPoint">
@@ -115,12 +125,73 @@
     </Form>
 </Modal>
 
+<Modal let:close on:close={(e) => e.detail()} key="deleteDataPoint">
+    <div slot="title">Delete Lead</div>
+    {#if selectedDataPointData}
+        <div class="card bg-base-200 my-2">
+            <div class="card-body">
+                <div class="card-title">{selectedDataPointData.name}</div>
+                <div class="grid grid-cols-3">
+                    <div class="flex flex-col justify-between">
+                        <div class="text-sm">Stage</div>
+                        <div class="badge gap-x-1">
+                            <span
+                                class="badge badge-xs"
+                                class:badge-primary={selectedDataPointData.status ===
+                                    "Approved"}
+                                class:badge-success={selectedDataPointData.status ===
+                                    "Disbursed"}
+                                class:badge-warning={selectedDataPointData.status ===
+                                    "Login"}
+                                class:badge-error={selectedDataPointData.status ===
+                                    "Rejected"} />
+
+                            {selectedDataPointData.status}
+                        </div>
+                    </div>
+                    <div class="">
+                        <span class="text-sm">Amount</span>
+                        <div>
+                            {#if selectedDataPointData.amount}
+                                {selectedDataPointData.amount}
+                            {:else}
+                                ..
+                            {/if}
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-sm">Executive Name</span>
+                        <div>{selectedDataPointData.executiveName}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <Form
+            on:success={() => {
+                selectedDataPointId = "";
+                pushToast("Deleted Successfully!");
+                close();
+            }}
+            action="?/deleteDataPoint"
+            let:updating
+            {form}>
+            <div class="grid grid-cols-2 gap-2">
+                <TInput name="id" value={selectedDataPointId} hidden />
+                <SubmitButton
+                    class="btn btn-primary col-span-2 w-full"
+                    {updating}>Delete</SubmitButton>
+            </div>
+        </Form>
+    {/if}
+</Modal>
+
 <button class="btn mt-1 btn-primary" on:click={() => showModal("addDataPoint")}
     >Add Lead</button>
 <div class="divider m-1" />
-<table class="table">
+<table class="table table-sm">
     <thead>
         <tr>
+            <th>Login Date</th>
             <th>Name</th>
             <th>Bank</th>
             <th>Executive Name</th>
@@ -134,6 +205,7 @@
         {#if data.dataPoints}
             {#each data.dataPoints as s}
                 <tr>
+                    <td>{s.createdAt.toLocaleDateString("en-IN")}</td>
                     <td>{s.name}</td>
                     <td>{s.bank}</td>
                     <td>{s.executiveName}</td>
@@ -169,6 +241,15 @@
                                 showModal("editStatus")
                             )}
                             class="btn btn-sm btn-ghost"><EditIcon /></button>
+                        {#if !dateOlderThanDays(s.createdAt, 0.085)}
+                            <button
+                                on:click={() => (
+                                    (selectedDataPointId = s.id),
+                                    showModal("deleteDataPoint")
+                                )}
+                                class="btn btn-sm btn-ghost"
+                                ><DeleteIcon /></button>
+                        {/if}
                     </td>
                 </tr>
             {/each}

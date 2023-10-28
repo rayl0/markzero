@@ -15,6 +15,12 @@
     { link: "/leads", icon: "sd", label: "Leads" },
   ];
 
+  let plinks = links;
+
+  $: if (data.role === "ADMIN")
+    plinks.push({ link: "/sign-up", icon: "md", label: "Add User" });
+  else plinks = links;
+
   const onThemeChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const setTheme = (_theme: "dark" | "cupcake") => {
       theme.set(_theme);
@@ -59,7 +65,7 @@
     <label for="my-drawer" class="drawer-overlay" />
     <ul class="flex flex-col p-4 min-h-full justify-between">
       <ul class="menu w-48 bg-base-100 text-base-content">
-        {#each links as { link, label }}
+        {#each plinks as { link, label }}
           <li>
             <a
               class:active={$page.url.pathname.startsWith(link) && link !== "/"}

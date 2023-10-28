@@ -1,7 +1,7 @@
 import { browser } from "$app/environment";
 import { theme } from "./theme";
 
-export function load() {
+export function load({ data }) {
     let tempTheme = "cupcake";
     if (browser) {
         const _theme = localStorage.getItem("data-theme");
@@ -10,9 +10,10 @@ export function load() {
             // @ts-ignore
             theme.set(_theme);
         }
-    } 
+    }
 
     return {
-        theme: tempTheme
+        theme: tempTheme,
+        role: data.role
     }
 }

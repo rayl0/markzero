@@ -74,7 +74,32 @@ const leadEditStatusSchema = z.object({
     remarks: z.string().trim().nonempty().optional()
 });
 
+const leadDeleteSchema = z.object({
+    id: z.string().trim().nonempty(),
+});
+
 export const actions = {
+    async deleteDataPoint({ locals }) {
+        const res = leadDeleteSchema.safeParse(locals.formData);
+        if (!res.success) {
+            return fail(400, {
+                type: "Logic",
+                error: "Invalid Id provided doesn't exist"
+            } as FailDataType);
+        }
+
+        try {
+            await db.dataPoint.delete({
+                where: {
+                    id: res.data.id
+                }
+            });
+        } catch (e: any) {
+            if (isPrismaError(e)) {
+                return fail(400, await handlePrismaError(e).json())
+            }
+        }
+    },
     async editStatus({ locals }) {
         const res = leadEditStatusSchema.safeParse(locals.formData);
         if (!res.success) {

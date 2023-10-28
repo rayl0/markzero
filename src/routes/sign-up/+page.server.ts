@@ -26,7 +26,6 @@ const userSchema = z.object({
 
 export const actions = {
     async default({ locals, fetch }) {
-        console.log(locals.formData);
         const res = userSchema.safeParse(locals.formData);
 
         if (!res.success) {
@@ -49,6 +48,10 @@ export const actions = {
                     assignedBanks: res.data.assignedBanks ? res.data.assignedBanks as Bank[] | undefined : null
                 }
             });
+
+            if(locals.userRole === "ADMIN") {
+                throw redirect(303, '/sign-up');
+            }
 
             const session = await auth.createSession({
                 userId: user.userId,
