@@ -82,10 +82,11 @@ model User {
   username String @unique
   role     Role
 
-  auth_session  Session[]
-  key           Key[]
-  assignedBanks Json?
-  dataPoints    DataPoint[]
+  auth_session         Session[]
+  key                  Key[]
+  assignedBanks        Json?
+  assignedProductTypes Json?
+  dataPoints           DataPoint[]
 }
 
 model Session {

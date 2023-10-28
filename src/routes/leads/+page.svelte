@@ -135,9 +135,11 @@
                 >Type
                 <svelte:fragment slot="opts">
                     <option>Select a type</option>
-                    {#each Object.values(Type) as b}
+                    {#if data.assignedProductTypes}
+                    {#each data.assignedProductTypes as b}
                         <option>{b}</option>
                     {/each}
+                    {/if}
                 </svelte:fragment>
             </Select>
             <TInput

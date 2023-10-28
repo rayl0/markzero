@@ -61,7 +61,8 @@ export async function load({ locals }) {
 
         return {
             dataPoints: data,
-            assignedBanks: locals.assignedBanks
+            assignedBanks: locals.assignedBanks,
+            assignedProductTypes: locals.assignedProductTypes
         }
     } catch (e: any) {
         if (isPrismaError(e)) {

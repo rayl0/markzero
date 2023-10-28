@@ -6,7 +6,7 @@
 /// <reference types="unplugin-icons/types/svelte" />
 /// <reference types="lucia" />
 
-import type { Bank, Role } from "@prisma/client";
+import type { Bank, Type, Role } from "@prisma/client";
 
 declare global {
   namespace App {
@@ -17,6 +17,7 @@ declare global {
       userRole: Role
       userId: string
       assignedBanks?: Bank[] | null
+      assignedProductTypes?: Type[] | null
       nFormData: FormData;
     }
     interface PageData {
@@ -32,10 +33,11 @@ declare global {
       username: string;
       role: Role;
       assignedBanks?: Bank[] | null
+      assignedProductTypes?: Type[] | null
     };
     type DatabaseSessionAttributes = {
     };
   }
 }
 
-export {};
+export { };
