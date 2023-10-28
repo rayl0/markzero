@@ -8,7 +8,7 @@ import type { Bank } from "@prisma/client";
 
 export async function load({ locals }) {
     try {
-        const data = await db.dataPoint.findMany({
+        const data = locals.userRole !== "ADMIN" ? await db.dataPoint.findMany({
             where:
             {
                 userId: locals.userId,
@@ -34,6 +34,29 @@ export async function load({ locals }) {
                 ]
             },
 
+        }) : await db.dataPoint.findMany({
+            where: {
+                OR: [
+                    // {
+                    //     createdAt: {
+                    //         gte: new Date(new Date().getTime() - 86400000)
+                    //     }
+                    // },
+                    {
+                        status: {
+                            in: ["Rejected", "Disbursed"],
+                        },
+                        statusUpdate: {
+                            gte: new Date(new Date().getTime() - 86400000)
+                        }
+                    },
+                    {
+                        status: {
+                            in: ["Login", "Approved"]
+                        }
+                    }
+                ]
+            }
         });
 
         return {

@@ -24,6 +24,85 @@
             return v.id === selectedDataPointId;
         });
     }
+
+    let stats = {
+        login: 0,
+        disbursed: 0,
+        rejected: 0,
+        approved: 0,
+    };
+
+    function isDateYesterday(inputDate: Date) {
+        // Create Date objects for the given date and the current date
+        const givenDate = new Date(inputDate);
+        const currentDate = new Date();
+
+        // Calculate the date for yesterday
+        const yesterday = new Date(currentDate);
+        yesterday.setDate(currentDate.getDate() - 1);
+
+        // Compare the year, month, and day components
+        return (
+            givenDate.getFullYear() === yesterday.getFullYear() &&
+            givenDate.getMonth() === yesterday.getMonth() &&
+            givenDate.getDate() === yesterday.getDate()
+        );
+    }
+
+    $: if (data.dataPoints) {
+        stats = data.dataPoints.reduce<typeof stats>(
+            (acc, v) => {
+                const incrementLogin = () => {
+                    if (
+                        !isDateYesterday(v.createdAt) &&
+                        !dateOlderThanDays(v.createdAt, 1)
+                    )
+                        acc.login++;
+                };
+
+                switch (v.status) {
+                    case "Login":
+                        incrementLogin();
+                        break;
+                    case "Disbursed":
+                        if (
+                            !isDateYesterday(v.statusUpdate) &&
+                            !dateOlderThanDays(v.statusUpdate, 1)
+                        )
+                            acc.disbursed++;
+
+                        incrementLogin();
+                        break;
+                    case "Rejected":
+                        if (
+                            !isDateYesterday(v.statusUpdate) &&
+                            !dateOlderThanDays(v.statusUpdate, 1)
+                        )
+                            acc.rejected++;
+
+                        incrementLogin();
+                        break;
+                    case "Approved":
+                        if (
+                            !isDateYesterday(v.statusUpdate) &&
+                            !dateOlderThanDays(v.statusUpdate, 1)
+                        )
+                            acc.approved++;
+
+                        incrementLogin();
+                        break;
+                }
+
+                return acc;
+            },
+            {
+                login: 0,
+                disbursed: 0,
+                rejected: 0,
+                approved: 0,
+            }
+        );
+    }
 </script>
 
 <Modal let:close on:close={(e) => e.detail()} key="addDataPoint">
@@ -188,6 +267,24 @@
 <button class="btn mt-1 btn-primary" on:click={() => showModal("addDataPoint")}
     >Add Lead</button>
 <div class="divider m-1" />
+<div class="stats bg-base-200 my-2 mb-4 text-base-content">
+    <div class="stat">
+        <div class="stat-title">Today Login</div>
+        <div class="stat-value">{stats.login}</div>
+    </div>
+    <div class="stat">
+        <div class="stat-title">Today Approved</div>
+        <div class="stat-value">{stats.approved}</div>
+    </div>
+    <div class="stat">
+        <div class="stat-title">Today Rejected</div>
+        <div class="stat-value">{stats.rejected}</div>
+    </div>
+    <div class="stat">
+        <div class="stat-title">Today Disbursed</div>
+        <div class="stat-value">{stats.disbursed}</div>
+    </div>
+</div>
 <table class="table table-sm">
     <thead>
         <tr>
@@ -234,23 +331,26 @@
                             ..
                         {/if}
                     </td>
-                    <td>
-                        <button
-                            on:click={() => (
-                                (selectedDataPointId = s.id),
-                                showModal("editStatus")
-                            )}
-                            class="btn btn-sm btn-ghost"><EditIcon /></button>
-                        {#if !dateOlderThanDays(s.createdAt, 0.085)}
+                    {#if data.role !== "ADMIN" && data.role !== "SUPERVISOR"}
+                        <td>
                             <button
                                 on:click={() => (
                                     (selectedDataPointId = s.id),
-                                    showModal("deleteDataPoint")
+                                    showModal("editStatus")
                                 )}
                                 class="btn btn-sm btn-ghost"
-                                ><DeleteIcon /></button>
-                        {/if}
-                    </td>
+                                ><EditIcon /></button>
+                            {#if !dateOlderThanDays(s.createdAt, 0.085)}
+                                <button
+                                    on:click={() => (
+                                        (selectedDataPointId = s.id),
+                                        showModal("deleteDataPoint")
+                                    )}
+                                    class="btn btn-sm btn-ghost"
+                                    ><DeleteIcon /></button>
+                            {/if}
+                        </td>
+                    {/if}
                 </tr>
             {/each}
         {/if}
