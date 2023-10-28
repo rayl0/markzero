@@ -16,6 +16,7 @@ declare global {
       auth: import("lucia").AuthRequest;
       userRole: Role
       userId: string
+      userName: string
       assignedBanks?: Bank[] | null
       assignedProductTypes?: Type[] | null
       nFormData: FormData;

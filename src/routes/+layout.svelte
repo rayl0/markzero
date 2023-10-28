@@ -22,13 +22,13 @@
   else plinks = links;
 
   const onThemeChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const setTheme = (_theme: "dark" | "cupcake") => {
+    const setTheme = (_theme: "forest" | "cupcake") => {
       theme.set(_theme);
       document.documentElement.setAttribute("data-theme", _theme);
       localStorage.setItem("data-theme", _theme);
     };
     if (e.currentTarget.checked) {
-      setTheme("dark");
+      setTheme("forest");
     } else {
       setTheme("cupcake");
     }
@@ -63,6 +63,9 @@
   </div>
   <div class="drawer-side">
     <label for="my-drawer" class="drawer-overlay" />
+    {#if data.username}
+      <div class="text-center mt-4">{data.username}</div>
+    {/if}
     <ul class="flex flex-col p-4 min-h-full justify-between">
       <ul class="menu w-48 bg-base-100 text-base-content">
         {#each plinks as { link, label }}

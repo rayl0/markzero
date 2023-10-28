@@ -14,6 +14,7 @@ export function load({ data }) {
 
     return {
         theme: tempTheme,
-        role: data.role
+        role: data.role,
+        username: data.email
     }
 }

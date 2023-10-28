@@ -15,6 +15,7 @@ export async function handle({ event, resolve }) {
   if (session && session.user) {
     event.locals.userRole = session.user.role;
     event.locals.userId = session.user.userId;
+    event.locals.userName = session.user.username;
     if (event.locals.userRole === "NORMAL") {
       event.locals.assignedBanks = session.user.assignedBanks;
       event.locals.assignedProductTypes = session.user.assignedProductTypes;

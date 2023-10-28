@@ -186,7 +186,7 @@
                 name="status"
                 >Status
                 <svelte:fragment slot="opts">
-                    <option>Select a status</option>
+                    <option selected disabled>Select a status</option>
                     {#each Object.values(Status) as b}
                         <option>{b}</option>
                     {/each}

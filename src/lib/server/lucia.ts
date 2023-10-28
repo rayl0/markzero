@@ -13,7 +13,8 @@ export const auth = lucia({
 		return {
 			username: e.username,
 			role: e.role,
-			assignedBanks: e.assignedBanks
+			assignedBanks: e.assignedBanks,
+			assignedProductTypes: e.assignedProductTypes
 		}
 	},
 });
