@@ -10,5 +10,5 @@ const prismaClientIndexBrowser = resolve('@prisma/client/index-browser').replace
 
 export default defineConfig({
   plugins: [sveltekit(), Icons({ compiler: "svelte", scale: 1.5 })],
-  // resolve: { alias: { '.prisma/client/index-browser': path.relative(__dirname, prismaClientIndexBrowser) } },
+  resolve: { alias: { '.prisma/client/index-browser': path.relative(__dirname, prismaClientIndexBrowser) } },
 });
