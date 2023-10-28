@@ -63,11 +63,12 @@
   </div>
   <div class="drawer-side">
     <label for="my-drawer" class="drawer-overlay" />
-    {#if data.username}
-      <div class="text-center badge badge-sm mt-4">{data.username}</div>
-    {/if}
+
     <ul class="flex flex-col p-4 min-h-full justify-between">
       <ul class="menu w-48 bg-base-100 text-base-content">
+        {#if data.username}
+          <div class="text-center badge bg-base-200 text-base-content badge-sm mb-3">{data.username}</div>
+        {/if}
         {#each plinks as { link, label }}
           <li>
             <a
