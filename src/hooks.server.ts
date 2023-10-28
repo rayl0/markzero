@@ -1,8 +1,6 @@
-// import { auth } from "$lib/server/lucia";
 import { auth } from "$lib/server/lucia";
 import { formDataToJson } from "$lib/utils";
 import { redirect } from "@sveltejs/kit";
-
 
 export async function handle({ event, resolve }) {
   event.locals.auth = auth.handleRequest(event);
@@ -20,6 +18,10 @@ export async function handle({ event, resolve }) {
       event.locals.assignedBanks = session.user.assignedBanks;
       event.locals.assignedProductTypes = session.user.assignedProductTypes;
     }
+  } else {
+    event.locals.userRole = undefined;
+    event.locals.userId = undefined;
+    event.locals.userName = undefined;
   }
 
   if (

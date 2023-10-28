@@ -21,10 +21,15 @@ export const actions = {
 
         try {
             const key = await auth.useKey('email', res.data.username, res.data.password);
+
+            await auth.invalidateAllUserSessions(key.userId);
+            await auth.deleteDeadUserSessions(key.userId);
+
             const session = await auth.createSession({
                 userId: key.userId,
                 attributes: {}
             });
+
             locals.auth.setSession(session);
         } catch (e: any) {
             if (isPrismaError(e)) {

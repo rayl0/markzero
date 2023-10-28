@@ -14,9 +14,9 @@ declare global {
     interface Locals {
       formData: Record<string, any>;
       auth: import("lucia").AuthRequest;
-      userRole: Role
-      userId: string
-      userName: string
+      userRole?: Role
+      userId?: string
+      userName?: string
       assignedBanks?: Bank[] | null
       assignedProductTypes?: Type[] | null
       nFormData: FormData;

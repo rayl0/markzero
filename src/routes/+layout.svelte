@@ -1,14 +1,14 @@
 <script lang="ts">
-  import "../app.css";
-  import Toast from "@comps/Toast.svelte";
   import { page } from "$app/stores";
-  import XlsxErrorModal from "@comps/XlsxErrorModal.svelte";
-  import { theme } from "./theme";
-  import Sun from "~icons/lucide/sun";
-  import Moon from "~icons/lucide/moon";
-  import type { ChangeEventHandler } from "svelte/elements";
   import Modal from "@comps/Modal.svelte";
+  import Toast from "@comps/Toast.svelte";
+  import XlsxErrorModal from "@comps/XlsxErrorModal.svelte";
   import { showModal } from "@comps/modal";
+  import type { ChangeEventHandler } from "svelte/elements";
+  import Moon from "~icons/lucide/moon";
+  import Sun from "~icons/lucide/sun";
+  import "../app.css";
+  import { theme } from "./theme";
 
   let links = [
     { link: "/dashboard", icon: "sd", label: "Dashboard" },
@@ -67,7 +67,12 @@
     <ul class="flex flex-col p-4 min-h-full justify-between">
       <ul class="menu w-48 bg-base-100 text-base-content">
         {#if data.username}
-          <div class="text-center badge bg-base-200 text-base-content badge-sm mb-3">{data.username}</div>
+          <div class="flex flex-col mb-5 items-center">
+            <div class="badge bg-base-200 text-base-content badge-sm mb-3">
+              {data.username}
+            </div>
+            <a href="/logout" class="btn btn-xs btn-secondary"> Logout </a>
+          </div>
         {/if}
         {#each plinks as { link, label }}
           <li>
