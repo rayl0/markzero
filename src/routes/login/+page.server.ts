@@ -20,7 +20,7 @@ export const actions = {
         }
 
         try {
-            const key = await auth.useKey('username', res.data.username, res.data.password);
+            const key = await auth.useKey('email', res.data.username, res.data.password);
             const session = await auth.createSession({
                 userId: key.userId,
                 attributes: {}

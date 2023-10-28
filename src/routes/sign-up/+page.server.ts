@@ -15,7 +15,7 @@ export async function load({ locals }) {
 }
 
 const userSchema = z.object({
-    username: z.string().trim().nonempty().toLowerCase(),
+    username: z.string().trim().nonempty().email().toLowerCase(),
     password: z.string().trim().nonempty().regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
     role: z.enum(["ADMIN", "SUPERVISOR", "NORMAL"]),
     assignedBanks: z.array(z.string().trim().nonempty()).optional()
@@ -38,7 +38,7 @@ export const actions = {
         try {
             const user = await auth.createUser({
                 key: {
-                    providerId: "username",
+                    providerId: "email",
                     providerUserId: res.data.username,
                     password: res.data.password
                 },

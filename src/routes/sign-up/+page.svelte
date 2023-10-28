@@ -15,7 +15,7 @@
 <h1 class="text-3xl my-4 text-center"> Add user </h1>
 <Form {form} let:updating>
     <div class="flex flex-col gap-2 max-w-md mx-auto">
-    <TInput name="username">User Name</TInput>
+    <TInput type="email" name="username">User Name</TInput>
     <TInput type="password" name="password">Password</TInput>
     <Select
         value={selectedRole}
