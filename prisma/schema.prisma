@@ -30,6 +30,28 @@ enum Bank {
   Faircent
   CreditSession
   Mahindra
+  LT
+  Mas
+  Trucap
+  Godrej
+  Finnable
+  Piramal
+  JanaBank
+  Awas
+  Shubam
+  LICHousing
+  UGRO
+  FedBank
+  SMC
+  Flexi
+  Clix
+  Indusand 
+  Airthmat
+  Paysense
+  Indiabulls
+  Sitara
+  Vastu
+  HDB
 }
 
 enum Status {
