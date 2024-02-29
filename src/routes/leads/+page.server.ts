@@ -4,6 +4,7 @@ import { handle } from "../../hooks.server";
 import db from "$lib/server/database";
 import { z } from "zod";
 import type { Bank } from "@prisma/client";
+import { PUBLIC_CITYSTATE_API_KEY } from "$env/static/public";
 
 
 export async function load({ locals }) {
@@ -59,10 +60,23 @@ export async function load({ locals }) {
             }
         });
 
+        let headers = new Headers();
+        headers.append("X-CSCAPI-KEY", PUBLIC_CITYSTATE_API_KEY);
+
+        let requestOptions = {
+            method: 'GET',
+            headers: headers,
+            redirect: 'follow'
+        };
+
+        // Pass Country Code -- Eg: Country Code : IN
+        const states = await (await fetch("https://api.countrystatecity.in/v1/countries/IN/states", requestOptions as RequestInit)).json() as { name: string; iso2: string }[];
+
         return {
             dataPoints: data,
             assignedBanks: locals.assignedBanks,
-            assignedProductTypes: locals.assignedProductTypes
+            assignedProductTypes: locals.assignedProductTypes,
+            states: states.sort((a, b) => a.name > b.name ? 1 : -1)
         }
     } catch (e: any) {
         if (isPrismaError(e)) {
@@ -88,7 +102,9 @@ const leadSchema = z.object({
         "HL",
         "Doctor"
     ]),
-    remarks: z.string().trim().nonempty().optional()
+    remarks: z.string().trim().nonempty().optional(),
+    state: z.string().trim().nonempty(),
+    location: z.string().trim().nonempty(),
 });
 
 const leadEditStatusSchema = z.object({

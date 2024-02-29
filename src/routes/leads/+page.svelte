@@ -10,6 +10,7 @@
     import EditIcon from "~icons/lucide/edit-2";
     import DeleteIcon from "~icons/lucide/trash";
     import { dateOlderThanDays } from "$lib/apiUtils";
+    import { PUBLIC_CITYSTATE_API_KEY } from "$env/static/public";
 
     export let data;
     export let form;
@@ -18,6 +19,35 @@
     let selectedStatus: Status = "Login";
 
     let selectedDataPointData: DataPoint | undefined = undefined;
+
+    let selectedState = "";
+    let selectedStateName = "";
+    let cities: { name: string }[] = [];
+
+    async function fetchCities(selectedState) {
+        let headers = new Headers();
+        headers.append("X-CSCAPI-KEY", PUBLIC_CITYSTATE_API_KEY);
+
+        let requestOptions = {
+            method: "GET",
+            headers: headers,
+            redirect: "follow",
+        };
+
+        // Pass Country Code -- Eg: Country Code : IN
+        cities = (await (
+            await fetch(
+                `https://api.countrystatecity.in/v1/countries/IN/states/${selectedState}/cities`,
+                requestOptions as RequestInit,
+            )
+        ).json()) as { name: string; iso2: string }[];
+    }
+
+    $: if (selectedState != "")
+        selectedStateName = data.states!.find(
+            (v) => v.iso2 === selectedState,
+        )!.name;
+    $: if (selectedState != "") fetchCities(selectedState);
 
     $: if (selectedDataPointId != "" && data.dataPoints) {
         selectedDataPointData = data.dataPoints.find((v) => {
@@ -100,7 +130,7 @@
                 disbursed: 0,
                 rejected: 0,
                 approved: 0,
-            }
+            },
         );
     }
 </script>
@@ -114,10 +144,12 @@
         }}
         action="?/addDataPoint"
         let:updating
-        {form}>
+        {form}
+    >
         <div class="grid grid-cols-2 gap-2">
             <TInput width="w-full col-span-1" name="executiveName"
-                >Executive Name</TInput>
+                >Executive Name</TInput
+            >
             <Select width="w-full col-span-1" name="bank"
                 >Bank
                 <svelte:fragment slot="opts">
@@ -136,16 +168,17 @@
                 <svelte:fragment slot="opts">
                     <option>Select a type</option>
                     {#if data.assignedProductTypes}
-                    {#each data.assignedProductTypes as b}
-                        <option>{b}</option>
-                    {/each}
+                        {#each data.assignedProductTypes as b}
+                            <option>{b}</option>
+                        {/each}
                     {/if}
                 </svelte:fragment>
             </Select>
             <TInput
                 width="w-full col-span-1"
                 name="+amount?"
-                placeholder="@optional">Amount</TInput>
+                placeholder="@optional">Amount</TInput
+            >
             <Select width="w-full col-span-1" name="status"
                 >Status
                 <svelte:fragment slot="opts">
@@ -158,10 +191,41 @@
             <TInput
                 width="w-full col-span-2"
                 name="remarks?"
-                placeholder="@optional">Remarks</TInput>
+                placeholder="@optional">Remarks</TInput
+            >
+            <TInput
+                width="w-full col-span-2"
+                name="state"
+                value={selectedStateName}
+                nolabel
+                hidden
+            ></TInput>
+            <Select
+                value={selectedState}
+                on:change={(e) => (selectedState = e.detail)}
+                width="w-full col-span-1"
+                name="statetemp"
+                >State
+                <svelte:fragment slot="opts">
+                    <option selected disabled>Select a state</option>
+                    {#each data.states as b}
+                        <option value={b.iso2}>{b.name}</option>
+                    {/each}
+                </svelte:fragment>
+            </Select>
+            <Select width="w-full col-span-1" name="location"
+                >Location
+                <svelte:fragment slot="opts">
+                    <option>Select a location</option>
+                    {#each cities as b}
+                        <option>{b.name}</option>
+                    {/each}
+                </svelte:fragment>
+            </Select>
             <SubmitButton
                 class="btn btn-primary col-span-2 w-full"
-                {updating} />
+                {updating}
+            />
         </div>
     </Form>
 </Modal>
@@ -176,7 +240,8 @@
         }}
         action="?/editStatus"
         let:updating
-        {form}>
+        {form}
+    >
         <div class="grid grid-cols-2 gap-2">
             <TInput name="id" value={selectedDataPointId} hidden />
             <Select
@@ -198,10 +263,12 @@
             <TInput
                 width="w-full col-span-2"
                 name="remarks?"
-                placeholder="@optional">Remarks</TInput>
+                placeholder="@optional">Remarks</TInput
+            >
             <SubmitButton
                 class="btn btn-primary col-span-2 w-full"
-                {updating} />
+                {updating}
+            />
         </div>
     </Form>
 </Modal>
@@ -225,7 +292,8 @@
                                 class:badge-warning={selectedDataPointData.status ===
                                     "Login"}
                                 class:badge-error={selectedDataPointData.status ===
-                                    "Rejected"} />
+                                    "Rejected"}
+                            />
 
                             {selectedDataPointData.status}
                         </div>
@@ -255,19 +323,22 @@
             }}
             action="?/deleteDataPoint"
             let:updating
-            {form}>
+            {form}
+        >
             <div class="grid grid-cols-2 gap-2">
                 <TInput name="id" value={selectedDataPointId} hidden />
                 <SubmitButton
                     class="btn btn-primary col-span-2 w-full"
-                    {updating}>Delete</SubmitButton>
+                    {updating}>Delete</SubmitButton
+                >
             </div>
         </Form>
     {/if}
 </Modal>
 
 <button class="btn mt-1 btn-primary" on:click={() => showModal("addDataPoint")}
-    >Add Lead</button>
+    >Add Lead</button
+>
 <div class="divider m-1" />
 <div class="stats bg-base-200 my-2 mb-4 text-base-content">
     <div class="stat">
@@ -322,10 +393,12 @@
                                 class:badge-primary={s.status === "Approved"}
                                 class:badge-success={s.status === "Disbursed"}
                                 class:badge-warning={s.status === "Login"}
-                                class:badge-error={s.status === "Rejected"} />
+                                class:badge-error={s.status === "Rejected"}
+                            />
 
                             {s.status}
-                        </span></td>
+                        </span></td
+                    >
                     <td>
                         {#if s.remarks}
                             {s.remarks}
@@ -341,7 +414,8 @@
                                     showModal("editStatus")
                                 )}
                                 class="btn btn-sm btn-ghost"
-                                ><EditIcon /></button>
+                                ><EditIcon /></button
+                            >
                             {#if !dateOlderThanDays(s.createdAt, 0.085)}
                                 <button
                                     on:click={() => (
@@ -349,7 +423,8 @@
                                         showModal("deleteDataPoint")
                                     )}
                                     class="btn btn-sm btn-ghost"
-                                    ><DeleteIcon /></button>
+                                    ><DeleteIcon /></button
+                                >
                             {/if}
                         </td>
                     {/if}

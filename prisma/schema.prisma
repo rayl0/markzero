@@ -83,6 +83,8 @@ model DataPoint {
   statusUpdate  DateTime
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  state         String?
+  location      String?
 
   user   User   @relation(fields: [userId], references: [id])
   userId String
