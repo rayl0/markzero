@@ -199,6 +199,8 @@ export const actions = {
                     amount: res.data.amount,
                     type: res.data.type,
                     mobile: res.data.mobile,
+                    state: res.data.state,
+                    location: res.data.location,
                     statusUpdate: new Date(),
 
                     user: {

@@ -9,17 +9,22 @@
   import Sun from "~icons/lucide/sun";
   import "../app.css";
   import { theme } from "./theme";
+  import { onMount } from "svelte";
 
   let links = [
     { link: "/dashboard", icon: "sd", label: "Dashboard" },
     { link: "/leads", icon: "sd", label: "Leads" },
   ];
 
-  let plinks = links;
+  let plinks = [...links];
 
-  $: if (data.role === "ADMIN")
-    plinks.push({ link: "/sign-up", icon: "md", label: "Add User" });
-  else plinks = links;
+  onMount(() => {
+    if (data.role === "ADMIN") {
+      plinks.push({ link: "/sign-up", icon: "md", label: "Add User" });
+      plinks.push({ link: "/users", icon: "md", label: "Users" });
+      plinks = [...plinks];
+    } else plinks = [...links];
+  });
 
   const onThemeChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const setTheme = (_theme: "forest" | "cupcake") => {
@@ -78,7 +83,8 @@
           <li>
             <a
               class:active={$page.url.pathname.startsWith(link) && link !== "/"}
-              href={link}>{label}</a>
+              href={link}>{label}</a
+            >
           </li>
         {/each}
       </ul>
@@ -86,7 +92,8 @@
         <input
           on:change={onThemeChange}
           type="checkbox"
-          checked={data.theme === "cupcake" ? false : true} />
+          checked={data.theme === "cupcake" ? false : true}
+        />
         <!-- sun icon -->
         <Sun class="text-base-content text-lg swap-off" />
         <!-- moon icon -->
