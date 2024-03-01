@@ -90,7 +90,6 @@ model DataPoint {
   userId String
 
   @@unique([mobile, userId, bank])
-  @@unique([name, mobile, bank])
   @@index([userId])
 }
 

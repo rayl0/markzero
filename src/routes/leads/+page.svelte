@@ -21,7 +21,7 @@
     let selectedDataPointData: DataPoint | undefined = undefined;
 
     let selectedState = "";
-    let selectedStateName = "";
+    let selectedStateName: string | null = "";
     let cities: { name: string }[] = [];
 
     async function fetchCities(selectedState) {
@@ -141,6 +141,7 @@
         on:success={() => {
             pushToast("Added Lead Successfully!");
             close();
+            selectedStateName = null
         }}
         action="?/addDataPoint"
         let:updating
