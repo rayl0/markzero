@@ -59,7 +59,7 @@ enum Status {
   Disbursed
   Approved
   Rejected
-  Underwriting/Verfication
+  UnderwritingOrVerfication
 }
 
 enum Type {
