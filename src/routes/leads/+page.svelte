@@ -369,6 +369,7 @@
             <th>Amount</th>
             <th>Status</th>
             <th>Remarks</th>
+            <th>Mobile</th>
             <!-- <th></th> -->
         </tr>
     </thead>
@@ -428,6 +429,11 @@
                                 >
                             {/if}
                         </td>
+                    {/if}
+                    {#if data.role == "ADMIN"}
+                    <td>
+                        <span>{s.mobile}</span>
+                    </td>
                     {/if}
                 </tr>
             {/each}
