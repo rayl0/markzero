@@ -94,7 +94,7 @@ const leadSchema = z.object({
     executiveName: z.string().trim().nonempty(),
     amount: z.number().nonnegative().optional(),
     mobile: z.string().regex(/^\d{10}$/),
-    status: z.enum(["Approved", "Disbursed", "Rejected", "Login"]),
+    status: z.enum(["Approved", "Disbursed", "UnderwritingOrVerfication", "Rejected", "Login"]),
     type: z.enum([
         "PL",
         "BL",
@@ -110,7 +110,7 @@ const leadSchema = z.object({
 const leadEditStatusSchema = z.object({
     id: z.string().trim().nonempty(),
     amount: z.number().nonnegative().optional(),
-    status: z.enum(["Approved", "Disbursed", "Rejected", "Login"]),
+    status: z.enum(["Approved", "Disbursed", "UnderwritingOrVerfication", "Rejected", "Login"]),
     remarks: z.string().trim().nonempty().optional()
 });
 
