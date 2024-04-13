@@ -47,6 +47,7 @@ enum Bank {
   Clix
   Indusand 
   Airthmat
+  IDFC
   Paysense
   Indiabulls
   Sitara
