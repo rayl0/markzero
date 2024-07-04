@@ -10,6 +10,7 @@
   import "../app.css";
   import { theme } from "./theme";
   import { onMount } from "svelte";
+  import { PUBLIC_MAINTAINCE } from "$env/static/public";
 
   let links = [
     { link: "/dashboard", icon: "sd", label: "Dashboard" },
@@ -61,46 +62,50 @@
 </Modal>
 
 <Toast />
-<div class="drawer lg:drawer-open">
-  <input id="mainDrawer" type="checkbox" class="drawer-toggle" />
-  <div class="drawer-content">
-    <slot />
-  </div>
-  <div class="drawer-side">
-    <label for="my-drawer" class="drawer-overlay" />
 
-    <ul class="flex flex-col p-4 min-h-full justify-between">
-      <ul class="menu w-48 bg-base-100 text-base-content">
-        {#if data.username}
-          <div class="flex flex-col mb-5 items-center">
-            <div class="badge bg-base-200 text-base-content badge-sm mb-3">
-              {data.username}
+{#if PUBLIC_MAINTAINCE === "on"}
+  <slot />
+{:else}
+  <div class="drawer lg:drawer-open">
+    <input id="mainDrawer" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content">
+      <slot />
+    </div>
+    <div class="drawer-side">
+      <label for="my-drawer" class="drawer-overlay" />
+
+      <ul class="flex flex-col p-4 min-h-full justify-between">
+        <ul class="menu w-48 bg-base-100 text-base-content">
+          {#if data.username}
+            <div class="flex flex-col mb-5 items-center">
+              <div class="badge bg-base-200 text-base-content badge-sm mb-3">
+                {data.username}
+              </div>
+              <a href="/logout" class="btn btn-xs btn-secondary"> Logout </a>
             </div>
-            <a href="/logout" class="btn btn-xs btn-secondary"> Logout </a>
-          </div>
-        {/if}
-        {#each plinks as { link, label }}
-          <li>
-            <a
-              class:active={$page.url.pathname.startsWith(link) && link !== "/"}
-              href={link}>{label}</a
-            >
-          </li>
-        {/each}
+          {/if}
+          {#each plinks as { link, label }}
+            <li>
+              <a
+                class:active={$page.url.pathname.startsWith(link) &&
+                  link !== "/"}
+                href={link}>{label}</a>
+            </li>
+          {/each}
+        </ul>
+        <label class="swap swap-rotate">
+          <input
+            on:change={onThemeChange}
+            type="checkbox"
+            checked={data.theme === "cupcake" ? false : true} />
+          <!-- sun icon -->
+          <Sun class="text-base-content text-lg swap-off" />
+          <!-- moon icon -->
+          <Moon class="text-base-content text-lg swap-on" />
+        </label>
       </ul>
-      <label class="swap swap-rotate">
-        <input
-          on:change={onThemeChange}
-          type="checkbox"
-          checked={data.theme === "cupcake" ? false : true}
-        />
-        <!-- sun icon -->
-        <Sun class="text-base-content text-lg swap-off" />
-        <!-- moon icon -->
-        <Moon class="text-base-content text-lg swap-on" />
-      </label>
-    </ul>
+    </div>
   </div>
-</div>
+{/if}
 
 <XlsxErrorModal />

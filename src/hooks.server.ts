@@ -1,12 +1,22 @@
+import { PUBLIC_MAINTAINCE } from "$env/static/public";
 import { auth } from "$lib/server/lucia";
 import { formDataToJson } from "$lib/utils";
 import { redirect } from "@sveltejs/kit";
 
 export async function handle({ event, resolve }) {
+  if (PUBLIC_MAINTAINCE === "on") {
+    if (event.url.pathname !== "/maintaince")
+      throw redirect(303, "/maintaince");
+    else return resolve(event);
+  }
   event.locals.auth = auth.handleRequest(event);
 
   const session = await event.locals.auth.validate();
-  if (!session && event.url.pathname !== "/login" && event.url.pathname !== "/sign-up") {
+  if (
+    !session &&
+    event.url.pathname !== "/login" &&
+    event.url.pathname !== "/sign-up"
+  ) {
     throw redirect(302, `/login?redirect=${event.url.pathname}`);
   }
 
